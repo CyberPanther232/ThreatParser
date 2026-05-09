@@ -1,0 +1,183 @@
+/* ── Theme variables ────────────────────────────── */
+:root,
+[data-bs-theme="light"] {
+  --tp-bg:           #f4f6f9;
+  --tp-surface:      #ffffff;
+  --tp-surface-alt:  #f8f9fa;
+  --tp-border:       #dee2e6;
+  --tp-text:         #212529;
+  --tp-text-muted:   #6c757d;
+  --tp-header-key-bg:#f8f9fa;
+  --tp-header-key-fg:#495057;
+  --tp-shadow:       rgba(0,0,0,.08);
+}
+
+[data-bs-theme="dark"] {
+  --tp-bg:           #0f1117;
+  --tp-surface:      #1a1d27;
+  --tp-surface-alt:  #21252f;
+  --tp-border:       #2e3347;
+  --tp-text:         #e2e8f0;
+  --tp-text-muted:   #8892a4;
+  --tp-header-key-bg:#21252f;
+  --tp-header-key-fg:#a0aec0;
+  --tp-shadow:       rgba(0,0,0,.35);
+}
+
+/* ── Base ───────────────────────────────────────── */
+body {
+  background-color: var(--tp-bg);
+  color: var(--tp-text);
+  transition: background-color .2s, color .2s;
+}
+
+/* ── Navbar ─────────────────────────────────────── */
+.navbar-brand {
+  font-size: 1.25rem;
+  letter-spacing: .02em;
+}
+
+/* ── Theme toggle button ────────────────────────── */
+#theme-toggle {
+  border: 1px solid rgba(255,255,255,.25);
+  color: rgba(255,255,255,.85);
+  background: transparent;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .375rem;
+  font-size: 1rem;
+  transition: background .15s;
+}
+#theme-toggle:hover {
+  background: rgba(255,255,255,.12);
+}
+
+/* ── Upload page ────────────────────────────────── */
+.hero-icon {
+  font-size: 4rem;
+  color: #0d6efd;
+  line-height: 1;
+}
+
+.card {
+  background-color: var(--tp-surface);
+  border-color: var(--tp-border);
+}
+
+.feature-tile {
+  background: var(--tp-surface);
+  border: 1px solid var(--tp-border);
+  transition: box-shadow .15s;
+}
+
+.feature-tile:hover {
+  box-shadow: 0 .25rem .5rem var(--tp-shadow);
+}
+
+/* ── Score ring ─────────────────────────────────── */
+.score-ring {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 6px solid;
+  flex-shrink: 0;
+}
+
+.score-ring.score-danger  { border-color: #dc3545; color: #dc3545; }
+.score-ring.score-warning { border-color: #ffc107; color: #856404; }
+.score-ring.score-success { border-color: #198754; color: #198754; }
+
+[data-bs-theme="dark"] .score-ring.score-warning { color: #ffc107; }
+
+.score-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: .65rem;
+  opacity: .7;
+}
+
+/* ── Header table ───────────────────────────────── */
+.header-table td {
+  vertical-align: top;
+  padding: .45rem .75rem;
+}
+
+.header-key {
+  font-weight: 600;
+  width: 180px;
+  color: var(--tp-header-key-fg);
+  background: var(--tp-header-key-bg);
+  border-right: 1px solid var(--tp-border);
+}
+
+/* ── Cards ──────────────────────────────────────── */
+.card-header {
+  background: var(--tp-surface-alt);
+  border-bottom-color: var(--tp-border);
+  font-size: .95rem;
+  padding: .6rem 1rem;
+}
+
+/* ── Tables (dark mode) ─────────────────────────── */
+[data-bs-theme="dark"] .table {
+  --bs-table-bg: var(--tp-surface);
+  --bs-table-striped-bg: var(--tp-surface-alt);
+  --bs-table-hover-bg: var(--tp-surface-alt);
+  --bs-table-border-color: var(--tp-border);
+  color: var(--tp-text);
+}
+
+[data-bs-theme="dark"] .table-light {
+  --bs-table-bg: var(--tp-surface-alt);
+  --bs-table-color: var(--tp-text);
+}
+
+[data-bs-theme="dark"] .table-warning {
+  --bs-table-bg: rgba(255,193,7,.12);
+  --bs-table-color: var(--tp-text);
+}
+
+[data-bs-theme="dark"] .table-danger {
+  --bs-table-bg: rgba(220,53,69,.12);
+  --bs-table-color: var(--tp-text);
+}
+
+/* ── Form controls (dark mode) ──────────────────── */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .input-group-text {
+  background-color: var(--tp-surface-alt);
+  border-color: var(--tp-border);
+  color: var(--tp-text);
+}
+
+[data-bs-theme="dark"] .form-control::placeholder { color: var(--tp-text-muted); }
+[data-bs-theme="dark"] .form-text { color: var(--tp-text-muted); }
+
+/* ── VT badge strip ─────────────────────────────── */
+.vt-stats {
+  display: flex;
+  gap: .3rem;
+  flex-wrap: wrap;
+  margin-top: .3rem;
+}
+
+.vt-pill {
+  font-size: .7rem;
+  padding: .15rem .45rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+

@@ -1,0 +1,7 @@
+pyenv/*
+*.env
+*.eml
+*__pycache__/*
+*.pyc
+*.pycache
+instance/*
