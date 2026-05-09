@@ -61,6 +61,7 @@ python run.py
 Open `http://127.0.0.1:5000` in your browser.
 
 > **Note for Windows users:** if the venv `activate` script fails in PowerShell, run the app directly with the venv interpreter:
+>
 > ```powershell
 > .\pyenv\Scripts\python.exe run.py
 > ```
@@ -77,6 +78,7 @@ Open `http://127.0.0.1:5000` in your browser.
 4. Click **Analyze Email**
 
 Results show:
+
 - Threat score ring (0–100) with colour-coded verdict
 - Findings list with severity, type (PHISHING / SPAM), confidence, and detail
 - Full header table
@@ -124,13 +126,13 @@ GET /api/docs
 
 Copy `.env.example` to `.env` and set any of the variables below. All are optional — the app runs with safe defaults without a `.env` file.
 
-| Variable | Default | Description |
-|---|---|---|
-| `SECRET_KEY` | random | Flask session secret. Set a fixed value in production. |
-| `THREATPARSER_API_KEYS` | *(none)* | Comma-separated list of valid API keys. If empty, the API is open. |
-| `THREATPARSER_RATE_LIMIT_ANALYZE` | `20` | Max requests/minute to `POST /api/analyze` per IP. |
-| `THREATPARSER_RATE_LIMIT_HEALTH` | `60` | Max requests/minute to `GET /api/health` per IP. |
-| `THREATPARSER_TRUSTED_PROXY` | *(none)* | IP of a trusted reverse proxy. When set, `X-Forwarded-For` is used for rate limiting. |
+| Variable                            | Default    | Description                                                                            |
+| ----------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
+| `SECRET_KEY`                      | random     | Flask session secret. Set a fixed value in production.                                 |
+| `THREATPARSER_API_KEYS`           | *(none)* | Comma-separated list of valid API keys. If empty, the API is open.                     |
+| `THREATPARSER_RATE_LIMIT_ANALYZE` | `20`     | Max requests/minute to `POST /api/analyze` per IP.                                   |
+| `THREATPARSER_RATE_LIMIT_HEALTH`  | `60`     | Max requests/minute to `GET /api/health` per IP.                                     |
+| `THREATPARSER_TRUSTED_PROXY`      | *(none)* | IP of a trusted reverse proxy. When set,`X-Forwarded-For` is used for rate limiting. |
 
 ---
 
@@ -140,7 +142,7 @@ A `Dockerfile` is included:
 
 ```bash
 docker build -t threatparser .
-docker run -p 5000:5000 threatparser
+docker run -p 80:80 threatparser
 ```
 
 ---
