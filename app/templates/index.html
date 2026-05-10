@@ -70,6 +70,12 @@
           <button type="submit" class="btn btn-primary w-100" id="submit-btn">
             <i class="bi bi-search me-1"></i> Analyze Email
           </button>
+
+          {% if turnstile_site_key %}
+          <div class="mt-3 d-flex justify-content-center">
+            <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}"></div>
+          </div>
+          {% endif %}
         </form>
       </div>
     </div>
@@ -97,6 +103,10 @@
 
   </div>
 </div>
+
+{% if turnstile_site_key %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}
 
 <script>
   document.getElementById("upload-form").addEventListener("submit", function () {

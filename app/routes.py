@@ -1,6 +1,9 @@
 import os
+import json
 from datetime import datetime
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from urllib import parse as urlparse
+from urllib import request as urlrequest
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app, session
 from werkzeug.utils import secure_filename
 from .parser import parse_eml_bytes, extract_headers, extract_urls, extract_attachments, score_threat, scan_urls_virustotal, scan_urls_urlhaus, get_email_md5_hash, get_email_sha1_hash, get_email_sha256_hash
 from .security import require_api_key, rate_limit
@@ -14,9 +17,114 @@ def _allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def _verify_turnstile(response_token: str) -> tuple[bool, str | None]:
+    """
+    Verify Cloudflare Turnstile token.
+    Verification is enforced only when THREATPARSER_TURNSTILE_SECRET_KEY is set.
+    """
+    secret_key = current_app.config.get("TURNSTILE_SECRET_KEY", "").strip()
+    if not secret_key:
+        return True, None
+
+    if not response_token:
+        return False, "Please complete the Turnstile check before submitting."
+
+    remote_ip = request.remote_addr or ""
+    payload = {
+        "secret": secret_key,
+        "response": response_token,
+        "remoteip": remote_ip,
+    }
+    body = urlparse.urlencode(payload).encode("utf-8")
+    req = urlrequest.Request(
+        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+        data=body,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST",
+    )
+
+    try:
+        with urlrequest.urlopen(req, timeout=6) as resp:
+            raw = resp.read().decode("utf-8")
+        data = json.loads(raw)
+    except Exception:
+        return False, "Turnstile verification is temporarily unavailable. Please try again."
+
+    if data.get("success") is True:
+        return True, None
+
+    return False, "Turnstile verification failed. Please try again."
+
+
+def _site_gate_is_enabled() -> bool:
+    return bool(current_app.config.get("TURNSTILE_SITE_GATE_ENABLED"))
+
+
+def _site_gate_has_required_keys() -> bool:
+    return bool(
+        current_app.config.get("TURNSTILE_SITE_KEY", "").strip()
+        and current_app.config.get("TURNSTILE_SECRET_KEY", "").strip()
+    )
+
+
+def _sanitize_next_path(value: str) -> str:
+    if not value or not value.startswith("/"):
+        return url_for("main.index")
+    if value.startswith("//"):
+        return url_for("main.index")
+    return value
+
+
+@main.before_app_request
+def enforce_turnstile_site_gate():
+    """Require a one-time Turnstile check before serving UI pages."""
+    if not _site_gate_is_enabled() or not _site_gate_has_required_keys():
+        return None
+
+    if request.path.startswith("/api/"):
+        return None
+
+    if request.endpoint in ("static", "main.turnstile_gate", "main.turnstile_gate_verify"):
+        return None
+
+    if session.get("turnstile_human_verified") is True:
+        return None
+
+    next_path = request.full_path if request.query_string else request.path
+    return redirect(url_for("main.turnstile_gate", next=next_path))
+
+
 @main.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        turnstile_site_key=current_app.config.get("TURNSTILE_SITE_KEY", ""),
+        turnstile_site_gate_enabled=_site_gate_is_enabled() and _site_gate_has_required_keys(),
+    )
+
+
+@main.route("/human-check", methods=["GET"])
+def turnstile_gate():
+    next_path = _sanitize_next_path(request.args.get("next", ""))
+    return render_template(
+        "turnstile_gate.html",
+        turnstile_site_key=current_app.config.get("TURNSTILE_SITE_KEY", ""),
+        next_path=next_path,
+    )
+
+
+@main.route("/human-check/verify", methods=["POST"])
+def turnstile_gate_verify():
+    next_path = _sanitize_next_path(request.form.get("next", ""))
+    turnstile_token = request.form.get("cf-turnstile-response", "").strip()
+    turnstile_ok, turnstile_error = _verify_turnstile(turnstile_token)
+
+    if not turnstile_ok:
+        flash(turnstile_error or "Turnstile verification failed.", "danger")
+        return redirect(url_for("main.turnstile_gate", next=next_path))
+
+    session["turnstile_human_verified"] = True
+    return redirect(next_path)
 
 
 @main.route("/about", methods=["GET"])
@@ -26,6 +134,19 @@ def about():
 
 @main.route("/analyze", methods=["POST"])
 def analyze():
+    site_gate_active = _site_gate_is_enabled() and _site_gate_has_required_keys()
+
+    if site_gate_active:
+        if session.get("turnstile_human_verified") is not True:
+            flash("Please complete the human verification check.", "danger")
+            return redirect(url_for("main.turnstile_gate", next=url_for("main.index")))
+    else:
+        turnstile_token = request.form.get("cf-turnstile-response", "").strip()
+        turnstile_ok, turnstile_error = _verify_turnstile(turnstile_token)
+        if not turnstile_ok:
+            flash(turnstile_error or "Turnstile verification failed.", "danger")
+            return redirect(url_for("main.index"))
+
     if "eml_file" not in request.files:
         flash("No file selected.", "danger")
         return redirect(url_for("main.index"))

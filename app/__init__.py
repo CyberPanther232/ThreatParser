@@ -8,6 +8,11 @@ def create_app():
     # ── Core ──────────────────────────────────────────────────────────────
     app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024  # 10 MB upload limit
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or os.urandom(24)
+    app.config["TURNSTILE_SITE_KEY"] = os.environ.get("THREATPARSER_TURNSTILE_SITE_KEY", "").strip()
+    app.config["TURNSTILE_SECRET_KEY"] = os.environ.get("THREATPARSER_TURNSTILE_SECRET_KEY", "").strip()
+    app.config["TURNSTILE_SITE_GATE_ENABLED"] = (
+        os.environ.get("THREATPARSER_TURNSTILE_SITE_GATE", "").lower() in ("1", "true", "yes")
+    )
 
     # ── API security ──────────────────────────────────────────────────────
     # Comma-separated list of valid API keys.
