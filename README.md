@@ -1,5 +1,7 @@
 # ThreatParser
 
+![ThreatParser Logo](threatparser_logo.png)
+
 A Flask-based email threat analyser that parses `.eml` files and scores them for phishing, spam, and malware indicators. Optionally enriches results with VirusTotal and Abuse.CH URLhaus intelligence.
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue) ![Flask](https://img.shields.io/badge/flask-3.x-lightgrey) ![Bootstrap](https://img.shields.io/badge/bootstrap-5.3-purple)

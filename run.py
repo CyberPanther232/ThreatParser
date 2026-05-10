@@ -1,6 +1,36 @@
 import os
+from pathlib import Path
 from app import create_app
 
+
+def _load_local_dotenv() -> None:
+    """
+    Load environment variables from a local .env file if present.
+    Existing process environment variables are not overwritten.
+    """
+    dotenv_path = Path(__file__).resolve().parent / ".env"
+    if not dotenv_path.is_file():
+        return
+
+    for raw_line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if not key:
+            continue
+
+        # Remove matching single or double quote wrappers.
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+            value = value[1:-1]
+
+        os.environ.setdefault(key, value)
+
+
+_load_local_dotenv()
 app = create_app()
 
 
