@@ -58,7 +58,35 @@ copy .env.example .env
 python run.py
 ```
 
-Open `http://127.0.0.1:5000` in your browser.
+Open `http://127.0.0.1` in your browser.
+
+### Running with HTTPS (TLS)
+
+ThreatParser supports optional TLS at startup via environment variables.
+
+#### Option A: local testing with a temporary self-signed cert
+
+```bash
+# Windows PowerShell
+$env:THREATPARSER_SSL_ENABLED="true"
+$env:THREATPARSER_SSL_ADHOC="true"
+python run.py
+```
+
+Then open `https://127.0.0.1` (or your configured host/port).
+
+#### Option B: use your own certificate and key (recommended)
+
+```bash
+# Windows PowerShell
+$env:THREATPARSER_SSL_ENABLED="true"
+$env:THREATPARSER_SSL_CERT_FILE="C:\\certs\\threatparser.crt"
+$env:THREATPARSER_SSL_KEY_FILE="C:\\certs\\threatparser.key"
+$env:THREATPARSER_PORT="443"
+python run.py
+```
+
+When TLS is enabled, use `https://` for the UI and API endpoints.
 
 > **Note for Windows users:** if the venv `activate` script fails in PowerShell, run the app directly with the venv interpreter:
 >
@@ -72,7 +100,7 @@ Open `http://127.0.0.1:5000` in your browser.
 
 ### Web UI
 
-1. Go to `http://127.0.0.1:5000`
+1. Go to `http://127.0.0.1`
 2. Upload an `.eml` file (max 10 MB)
 3. Optionally paste a VirusTotal API key and/or an Abuse.CH URLhaus Auth-Key
 4. Click **Analyze Email**
@@ -103,7 +131,7 @@ eml_file=@path/to/email.eml
 cURL example:
 
 ```bash
-curl -X POST http://127.0.0.1:5000/api/analyze \
+curl -X POST http://127.0.0.1/api/analyze \
   -H "X-API-Key: mysecretkey" \
   -F "eml_file=@sample_email.eml"
 ```
@@ -133,6 +161,13 @@ Copy `.env.example` to `.env` and set any of the variables below. All are option
 | `THREATPARSER_RATE_LIMIT_ANALYZE` | `20`     | Max requests/minute to `POST /api/analyze` per IP.                                   |
 | `THREATPARSER_RATE_LIMIT_HEALTH`  | `60`     | Max requests/minute to `GET /api/health` per IP.                                     |
 | `THREATPARSER_TRUSTED_PROXY`      | *(none)* | IP of a trusted reverse proxy. When set,`X-Forwarded-For` is used for rate limiting. |
+| `THREATPARSER_HOST`               | `0.0.0.0` | Bind host for the Flask server.                                                        |
+| `THREATPARSER_PORT`               | `80`      | Bind port for the Flask server.                                                        |
+| `THREATPARSER_DEBUG`              | `true`    | Enables Flask debug mode. Disable in production.                                       |
+| `THREATPARSER_SSL_ENABLED`        | `false`   | Enables HTTPS/TLS for the Flask server.                                                |
+| `THREATPARSER_SSL_CERT_FILE`      | *(none)*  | Path to PEM certificate file for TLS.                                                  |
+| `THREATPARSER_SSL_KEY_FILE`       | *(none)*  | Path to PEM private key file for TLS.                                                  |
+| `THREATPARSER_SSL_ADHOC`          | `false`   | Use Werkzeug temporary self-signed cert (dev/testing only).                            |
 
 ---
 
@@ -144,6 +179,9 @@ A `Dockerfile` is included:
 docker build -t threatparser .
 docker run -p 80:80 threatparser
 ```
+
+To expose HTTPS from the containerized app, publish port `443` and set TLS env vars,
+plus mount certificate files into the container.
 
 ---
 
