@@ -172,6 +172,7 @@ Copy `.env.example` to `.env` and set any of the variables below. All are option
 | `THREATPARSER_SSL_ADHOC`          | `false`   | Use Werkzeug temporary self-signed cert (dev/testing only).                            |
 | `THREATPARSER_TURNSTILE_SITE_KEY` | *(none)*  | Cloudflare Turnstile site key for rendering the widget on the upload form.             |
 | `THREATPARSER_TURNSTILE_SECRET_KEY` | *(none)* | Cloudflare Turnstile secret key for server-side token verification.                     |
+| `THREATPARSER_TURNSTILE_SITE_GATE` | `false`  | When true, require Turnstile verification before serving non-API web pages.             |
 
 ---
 
