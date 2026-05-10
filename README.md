@@ -156,13 +156,13 @@ GET /api/docs
 
 Copy `.env.example` to `.env` and set any of the variables below. All are optional — the app runs with safe defaults without a `.env` file.
 
-| Variable                            | Default    | Description                                                                            |
-| ----------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
-| `SECRET_KEY`                      | random     | Flask session secret. Set a fixed value in production.                                 |
-| `THREATPARSER_API_KEYS`           | *(none)* | Comma-separated list of valid API keys. If empty, the API is open.                     |
-| `THREATPARSER_RATE_LIMIT_ANALYZE` | `20`     | Max requests/minute to `POST /api/analyze` per IP.                                   |
-| `THREATPARSER_RATE_LIMIT_HEALTH`  | `60`     | Max requests/minute to `GET /api/health` per IP.                                     |
-| `THREATPARSER_TRUSTED_PROXY`      | *(none)* | IP of a trusted reverse proxy. When set,`X-Forwarded-For` is used for rate limiting. |
+| Variable                            | Default     | Description                                                                            |
+| ----------------------------------- | ----------- | -------------------------------------------------------------------------------------- |
+| `SECRET_KEY`                      | random      | Flask session secret. Set a fixed value in production.                                 |
+| `THREATPARSER_API_KEYS`           | *(none)*  | Comma-separated list of valid API keys. If empty, the API is open.                     |
+| `THREATPARSER_RATE_LIMIT_ANALYZE` | `20`      | Max requests/minute to `POST /api/analyze` per IP.                                   |
+| `THREATPARSER_RATE_LIMIT_HEALTH`  | `60`      | Max requests/minute to `GET /api/health` per IP.                                     |
+| `THREATPARSER_TRUSTED_PROXY`      | *(none)*  | IP of a trusted reverse proxy. When set,`X-Forwarded-For` is used for rate limiting. |
 | `THREATPARSER_HOST`               | `0.0.0.0` | Bind host for the Flask server.                                                        |
 | `THREATPARSER_PORT`               | `80`      | Bind port for the Flask server.                                                        |
 | `THREATPARSER_DEBUG`              | `true`    | Enables Flask debug mode. Disable in production.                                       |
