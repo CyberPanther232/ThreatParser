@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}ThreatParser - Human Verification{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4 text-center">
+        <h1 class="h4 fw-bold mb-2">Human Verification Required</h1>
+        <p class="text-secondary mb-4">
+          Please complete the Cloudflare Turnstile check to continue to ThreatParser.
+        </p>
+
+        <form action="{{ url_for('main.turnstile_gate_verify') }}" method="post">
+          <input type="hidden" name="next" value="{{ next_path }}">
+          <div class="d-flex justify-content-center mb-3">
+            <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}"></div>
+          </div>
+          <button type="submit" class="btn btn-primary px-4">
+            Continue
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endblock %}
