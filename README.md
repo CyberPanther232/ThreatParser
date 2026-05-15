@@ -225,7 +225,7 @@ ThreatParser/
 
 ThreatParser is a heuristic analysis tool intended to assist security-aware users in evaluating suspicious emails. It does not replace professional threat intelligence platforms or human judgement. Results may include false positives and false negatives. Never solely rely on an automated tool when assessing whether an email is malicious.
 
-In it's original form ThreatParser does not store data on the server the application is running on. However, there always could be modifications performed by outside actors to change that standard behavior. Please do not upload proprietary, confidential, or sensitive emails to this application. I am not responsible for the potential data leakage this may cause.
+In it's original form ThreatParser does not store data on the server the application is running on. However, there could be modifications performed by outside actors to change that standard behavior on separate instances. Please do not upload proprietary, confidential, or sensitive emails to this application. I am not responsible for the potential data leakage this may cause.
 
 ---
 
